@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# data and outputs (not part of the code release)
+data/
+datasets/
+outputs/
+runs/
+*.log
+
+# archives; put large archives in GitHub Releases instead
+*.zip
+*.tar
+*.tar.gz
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# NOTE: *.pth checkpoints are intentionally NOT ignored -
+# they are part of this release. If a single file exceeds 50 MB,
+# move it to a GitHub Release or use Git LFS instead.
