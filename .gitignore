@@ -27,3 +27,9 @@ Thumbs.db
 # NOTE: *.pth checkpoints are intentionally NOT ignored -
 # they are part of this release. If a single file exceeds 50 MB,
 # move it to a GitHub Release or use Git LFS instead.
+
+# SAQ weights exceed GitHub's 100 MB per-file limit (~385 MB each).
+# They are distributed as a GitHub Release asset instead: see README section 4.
+checkpoints/*/SAQ/*.pth
+checkpoints/*/GCT/*.pth
+manifold/*.h5

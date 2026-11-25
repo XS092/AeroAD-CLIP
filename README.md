@@ -25,9 +25,9 @@ This repository contains the source code of the three modules, the checkpoints o
 | Component | Code | Weights | Status |
 |---|---|---|---|
 | Multi-Layer Adapters (MLA) | `models/mla.py` | `checkpoints/mvtec_ad/MLA/adapters_{6,12,18,24}.pth`<br>`checkpoints/visa/MLA/adapters_{6,12,18,24}.pth` | **released** |
-| Semantic-Adaptive Querying (SAQ) | `models/saq.py` | `checkpoints/*/SAQ/` | source code released; weights in preparation |
-| GCT bottleneck autoencoder | `models/gct_autoencoder.py` | `checkpoints/*/GCT/` | source code released; weights in preparation |
-| Anomaly-manifold prototypes (GCT) | `models/gct_tuning.py` | `manifold/anomaly_manifold.h5` | in preparation |
+| Semantic-Adaptive Querying (SAQ) | `models/saq.py` | `checkpoints/*/SAQ/*.pth` — **Release asset** | weights shipped in `saq_checkpoints.zip` (≈ 385 MB each, above GitHub's 100 MB file limit) |
+| GCT bottleneck autoencoder | `models/gct_autoencoder.py` | `checkpoints/*/GCT/*.pth` — **Release asset** | weights shipped with the same release |
+| Anomaly-manifold prototypes (GCT) | `models/gct_tuning.py` | `manifold/anomaly_manifold.h5` — **Release asset** | in preparation |
 | Fusion / scoring heads | `models/scoring.py` | — | no trainable parameters |
 
 **Not included**
@@ -55,7 +55,9 @@ AeroAD-CLIP/
 │   └── scoring.py                # heatmap fusion, top-k image score
 ├── checkpoints/
 │   ├── mvtec_ad/MLA/adapters_{6,12,18,24}.pth    # trained on MVTec AD
-│   └── visa/MLA/adapters_{6,12,18,24}.pth        # trained on VisA
+│   ├── visa/MLA/adapters_{6,12,18,24}.pth        # trained on VisA
+│   ├── mvtec_ad/SAQ/                             # via Releases (saq_checkpoints.zip)
+│   └── visa/SAQ/                                 # via Releases (saq_checkpoints.zip)
 ├── manifold/
 │   └── anomaly_manifold.h5       # prototypes mu_k^(l), K=16, l in {12,18,24}
 ├── scripts/
@@ -122,6 +124,25 @@ for l in (6, 12, 18, 24):
 ```
 
 The CLIP encoders and the MLA/SAQ modules are always evaluated with `torch.no_grad()`.
+
+### Weights shipped through Releases
+
+GitHub rejects any individual file larger than 100 MB, and one SAQ checkpoint is ≈ 385 MB. The SAQ weights are therefore **attached to the `saq-checkpoints` release** instead of being stored in the git history:
+
+1. open the **Releases** page of this repository and download `saq_checkpoints.zip`;
+2. unzip it at the repository root — the archive already contains the folders
+   `checkpoints/mvtec_ad/SAQ/` and `checkpoints/visa/SAQ/`;
+3. after unzipping the layout is
+
+```
+checkpoints/
+├── mvtec_ad/SAQ/SAQ_with_iteration.pth      # "with iteration" variant, 385 MB
+├── mvtec_ad/SAQ/SAQ_without_iteration.pth   # fixed-query ablation, 128 MB
+├── visa/SAQ/SAQ_with_iteration.pth
+└── visa/SAQ/SAQ_without_iteration.pth
+```
+
+The `without_iteration` checkpoints reproduce the layer-iteration ablation of the paper; the `with_iteration` ones are the full SAQ used for all reported results.
 
 ---
 
