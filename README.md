@@ -10,6 +10,14 @@ AeroAD-CLIP detects aircraft skin defects **without any aircraft-specific traini
 
 This repository contains the source code of the three modules, the checkpoints of **all trainable parts**, and the pre-computed **anomaly-manifold prototypes** in HDF5 format.
 
+<p align="center">
+  <img src="assets/framework.png" alt="Overview of AeroAD-CLIP" width="92%">
+</p>
+
+<p align="center">
+  <em>Overview of AeroAD-CLIP. (1) Frozen CLIP backbone with the Multi-Layer Adapter (MLA) that maps text anchors into the visual space of layers 6/12/18/24; (2) Semantic-Adaptive Querying (SAQ), where four learnable queries are propagated across layers by self- and cross-attention; (3) Geometric Consistency Tuning (GCT), where reconstruction-gradient prototypes steer the normal anchor on the unit sphere by SLERP and the per-patch deviations are combined by consistency voting.</em>
+</p>
+
 ---
 
 ## 1. What is included
