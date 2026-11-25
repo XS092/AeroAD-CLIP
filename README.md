@@ -22,12 +22,12 @@ This repository contains the source code of the three modules, the checkpoints o
 
 ## 1. What is included
 
-| Component | Code | Weights | Notes |
+| Component | Code | Weights | Status |
 |---|---|---|---|
-| Multi-Layer Adapters (MLA) | `models/mla.py` | `checkpoints/mla.pth` | two MLP projectors per layer: anomalous / normal |
-| Semantic-Adaptive Querying (SAQ) | `models/saq.py` | `checkpoints/saq.pth` | 4 queries, layers 6/12/18/24, orthogonality loss |
-| GCT bottleneck autoencoder | `models/gct_autoencoder.py` | `checkpoints/gct_ae.pth` | trained unsupervised on **normal** images only |
-| Anomaly-manifold prototypes (GCT) | `models/gct_tuning.py` | `manifold/anomaly_manifold.h5` | K = 16 prototypes per layer, l ∈ {12, 18, 24} |
+| Multi-Layer Adapters (MLA) | `models/mla.py` | `checkpoints/mvtec_ad/MLA/adapters_{6,12,18,24}.pth`<br>`checkpoints/visa/MLA/adapters_{6,12,18,24}.pth` | **released** |
+| Semantic-Adaptive Querying (SAQ) | `models/saq.py` | `checkpoints/*/SAQ/` | source code released; weights in preparation |
+| GCT bottleneck autoencoder | `models/gct_autoencoder.py` | `checkpoints/*/GCT/` | source code released; weights in preparation |
+| Anomaly-manifold prototypes (GCT) | `models/gct_tuning.py` | `manifold/anomaly_manifold.h5` | in preparation |
 | Fusion / scoring heads | `models/scoring.py` | — | no trainable parameters |
 
 **Not included**
@@ -54,9 +54,8 @@ AeroAD-CLIP/
 │   ├── gct_tuning.py             # prototype clustering, SLERP, consistency voting
 │   └── scoring.py                # heatmap fusion, top-k image score
 ├── checkpoints/
-│   ├── mla.pth
-│   ├── saq.pth
-│   └── gct_ae.pth
+│   ├── mvtec_ad/MLA/adapters_{6,12,18,24}.pth    # trained on MVTec AD
+│   └── visa/MLA/adapters_{6,12,18,24}.pth        # trained on VisA
 ├── manifold/
 │   └── anomaly_manifold.h5       # prototypes mu_k^(l), K=16, l in {12,18,24}
 ├── scripts/
@@ -100,26 +99,29 @@ Everything reported in the paper was run on a single NVIDIA RTX 5070, PyTorch 2.
 
 All checkpoints are plain `state_dict` files. They were obtained by training **only** on the public source-domain data stated below; no aircraft-skin image was ever used for training or adaptation.
 
-| File | Trained on | Trainable parameters | Contents |
-|---|---|---|---|
-| `checkpoints/mla.pth` | MVTec AD | ~0.6 M | `F_a^(l)`, `F_n^(l)` for l ∈ {6, 12, 18, 24} |
-| `checkpoints/saq.pth` | MVTec AD | ~1.2 M | 4 learnable queries, self-attention and cross-attention blocks, layer norms |
-| `checkpoints/gct_ae.pth` | MVTec AD **normal** images | ~0.4 M | bottleneck encoder `E_enc` and decoder `E_dec`, 20 epochs |
+Checkpoints are released for the **MLP adapters (MLA)**, separately for the two source domains: use `mvtec_ad/` for every target domain, and `visa/` only when MVTec AD itself is the target (as in the paper). One file per selected layer:
+
+| File | Trained on | Contents |
+|---|---|---|
+| `checkpoints/mvtec_ad/MLA/adapters_6.pth`  | MVTec AD | `F_a^(l)`, `F_n^(l)` at layer l = 6 |
+| `checkpoints/mvtec_ad/MLA/adapters_12.pth` | MVTec AD | layer l = 12 |
+| `checkpoints/mvtec_ad/MLA/adapters_18.pth` | MVTec AD | layer l = 18 |
+| `checkpoints/mvtec_ad/MLA/adapters_24.pth` | MVTec AD | layer l = 24 |
+| `checkpoints/visa/MLA/adapters_{6,12,18,24}.pth` | VisA | same, for the MVTec-AD target row |
 
 Loading:
 
 ```python
 import torch
 from models.mla import MultiLayerAdapter
-from models.saq import SemanticAdaptiveQuerying
-from models.gct_autoencoder import BottleneckAE
 
-mla = MultiLayerAdapter(...); mla.load_state_dict(torch.load("checkpoints/mla.pth", map_location="cpu")); mla.eval()
-saq = SemanticAdaptiveQuerying(...); saq.load_state_dict(torch.load("checkpoints/saq.pth", map_location="cpu")); saq.eval()
-ae  = BottleneckAE(...);           ae.load_state_dict(torch.load("checkpoints/gct_ae.pth",  map_location="cpu"));     ae.eval()
+for l in (6, 12, 18, 24):
+    adapter = MultiLayerAdapter(...)
+    adapter.load_state_dict(torch.load(f"checkpoints/mvtec_ad/MLA/adapters_{l}.pth", map_location="cpu"))
+    adapter.eval()
 ```
 
-The CLIP encoders and the MLA/SAQ modules are always evaluated with `torch.no_grad()`; only the parameters above exist.
+The CLIP encoders and the MLA/SAQ modules are always evaluated with `torch.no_grad()`.
 
 ---
 
