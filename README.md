@@ -136,13 +136,12 @@ GitHub rejects any individual file larger than 100 MB, and one SAQ checkpoint is
 
 ```
 checkpoints/
-├── mvtec_ad/SAQ/SAQ_with_iteration.pth      # "with iteration" variant, 385 MB
+├── mvtec_ad/SAQ/SAQ_with_iteration.pth      # full SAQ, 385 MB
 ├── mvtec_ad/SAQ/SAQ_without_iteration.pth   # fixed-query ablation, 128 MB
-├── visa/SAQ/SAQ_with_iteration.pth
-└── visa/SAQ/SAQ_without_iteration.pth
+└── visa/SAQ/SAQ_with_iteration.pth          # full SAQ, 385 MB
 ```
 
-The `without_iteration` checkpoints reproduce the layer-iteration ablation of the paper; the `with_iteration` ones are the full SAQ used for all reported results.
+The `without_iteration` checkpoints reproduce the layer-iteration ablation of the paper (released for MVTec AD); the `with_iteration` ones are the full SAQ used for all reported results.
 
 ---
 
