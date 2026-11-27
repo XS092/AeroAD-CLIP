@@ -1,4 +1,4 @@
-﻿# AeroAD-CLIP
+# AeroAD-CLIP
 
 Official code release for **AeroAD-CLIP: A Semantics–Geometry Synergized Framework for Zero-Shot Aircraft Skin Defect Detection** (IEEE Transactions on Aerospace and Electronic Systems, under review).
 
@@ -8,7 +8,7 @@ AeroAD-CLIP detects aircraft skin defects **without any aircraft-specific traini
 - **SAQ — Semantic-Adaptive Querying**: four learnable queries that are propagated layer by layer through self- and cross-attention, so that the discriminative direction is conditioned both on the image and on the depth of the layer.
 - **GCT — Geometric Consistency Tuning**: a bottleneck autoencoder trained on normal images only, whose reconstruction gradients are clustered into anomaly-manifold prototypes; the normal anchor is rotated toward these prototypes on the unit sphere (SLERP), and a patch is only accepted when several prototypes agree.
 
-This repository contains the source code of the three modules, the checkpoints of **all trainable parts**, and the pre-computed **anomaly-manifold prototypes** in HDF5 format.
+This repository contains the source code of the three modules. The trained weights are **not** stored in the git history (several of them exceed GitHub's 100 MB per-file limit); they are distributed separately, as described in §1.
 
 <p align="center">
   <img src="assets/framework.png" alt="Overview of AeroAD-CLIP" width="92%">
@@ -22,13 +22,21 @@ This repository contains the source code of the three modules, the checkpoints o
 
 ## 1. What is included
 
-| Component | Code | Weights | Status |
+| Component | Code | Weights | Where the weights live |
 |---|---|---|---|
-| Multi-Layer Adapters (MLA) | `models/mla.py` | `checkpoints/mvtec_ad/MLA/adapters_{6,12,18,24}.pth`<br>`checkpoints/visa/MLA/adapters_{6,12,18,24}.pth` | **released** |
-| Semantic-Adaptive Querying (SAQ) | `models/saq.py` | `checkpoints/*/SAQ/*.pth` — **Release asset** | weights shipped in `saq_checkpoints.zip` (≈ 385 MB each, above GitHub's 100 MB file limit) |
-| GCT bottleneck autoencoder | `models/gct_autoencoder.py` | `checkpoints/*/GCT/*.pth` — **Release asset** | weights shipped with the same release |
-| Anomaly-manifold prototypes (GCT) | `models/gct_tuning.py` | `manifold/anomaly_manifold.h5` — **Release asset** | in preparation |
+| Multi-Layer Adapters (MLA) | `models/mla.py` | `checkpoints/mvtec_ad/MLA/adapters_{6,12,18,24}.pth`<br>`checkpoints/visa/MLA/adapters_{6,12,18,24}.pth` | 4 files × 28 MB — distributed separately |
+| Semantic-Adaptive Querying (SAQ) | `models/saq.py` | `checkpoints/*/SAQ/*.pth` | ≈ 385 MB per file — distributed separately |
+| GCT bottleneck autoencoder | `models/gct_autoencoder.py` | `checkpoints/*/GCT/*.pth` | distributed separately |
+| Anomaly-manifold prototypes (GCT) | `models/gct_tuning.py` | `manifold/anomaly_manifold.h5` | distributed separately |
 | Fusion / scoring heads | `models/scoring.py` | — | no trainable parameters |
+
+**Where the weights are hosted**
+
+The weights are too large for the git history and are therefore published outside it. After downloading, unzip them at the repository root so that the paths in the table above are restored exactly as written.
+
+<!-- Fill in ONE of the following and delete the other -->
+- GitHub Releases: see the `weights` release on this repository's Releases page.
+<!-- - Hugging Face: https://huggingface.co/<username>/AeroAD-CLIP -->
 
 **Not included**
 
